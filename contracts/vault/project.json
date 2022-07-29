@@ -1,0 +1,52 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "contracts/vault/src",
+  "targets": {
+    "build": {
+      "executor": "nxcw:build",
+      "options": {
+        "release": false
+      },
+      "configurations": {
+        "production": {
+          "release": true
+        }
+      }
+    },
+    "test": {
+      "executor": "nxcw:test",
+      "options": {}
+    },
+    "lint": {
+      "executor": "nxcw:clippy",
+      "options": {
+        "fix": false,
+        "failOnWarnings": true,
+        "noDeps": true
+      }
+    },
+    "wasm": {
+      "executor": "nxcw:wasm",
+      "options": {
+        "release": true,
+        "target": "wasm32-unknown-unknown"
+      },
+      "configurations": {
+        "production": {
+          "release": true,
+          "target": "wasm32-unknown-unknown"
+        }
+      }
+    },
+    "optimize": {
+      "executor": "nxcw:optimize",
+      "options": {}
+    },
+    "schema": {
+      "executor": "nxcw:schema",
+      "options": {}
+    }
+  },
+  "tags": []
+}

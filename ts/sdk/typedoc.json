@@ -1,0 +1,7 @@
+{
+  "out": "./docs",
+  "name": "standard-cosmwasm-beaker",
+  "theme": "markdown",
+  "readme": "none",
+  "tsconfig": "./tsconfig.bundle.json"
+}
