@@ -4,7 +4,7 @@ use cosmwasm_std::{from_binary, to_binary, CosmosMsg, DepsMut, Empty, Response, 
 
 use cw721::{
     Approval, ApprovalResponse, ContractInfoResponse, Cw721Query, Cw721ReceiveMsg, Expiration,
-    NftInfoResponse, OperatorsResponse, OwnerOfResponse,
+    NftInfoResponse, AllOperatorsResponse, OwnerOfResponse,
 };
 
 use crate::{
@@ -570,7 +570,7 @@ fn approving_all_revoking_all() {
         .unwrap();
     assert_eq!(
         res,
-        OperatorsResponse {
+        AllOperatorsResponse {
             operators: vec![cw721::Approval {
                 spender: String::from("operator"),
                 expires: Expiration::Never {}
@@ -602,7 +602,7 @@ fn approving_all_revoking_all() {
         .unwrap();
     assert_eq!(
         res,
-        OperatorsResponse {
+        AllOperatorsResponse {
             operators: vec![cw721::Approval {
                 spender: String::from("buddy"),
                 expires: buddy_expires,
@@ -621,7 +621,7 @@ fn approving_all_revoking_all() {
         .unwrap();
     assert_eq!(
         res,
-        OperatorsResponse {
+        AllOperatorsResponse {
             operators: vec![cw721::Approval {
                 spender: String::from("operator"),
                 expires: Expiration::Never {}
@@ -649,7 +649,7 @@ fn approving_all_revoking_all() {
         .unwrap();
     assert_eq!(
         res,
-        OperatorsResponse {
+        AllOperatorsResponse {
             operators: vec![cw721::Approval {
                 spender: String::from("buddy"),
                 expires: buddy_expires,

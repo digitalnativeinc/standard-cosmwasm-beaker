@@ -1,4 +1,4 @@
-use crate::msg::{StateResponse, VaultBalanceResponse};
+use crate::msg::{GetStateResponse, GetBalancesResponse};
 
 use super::*;
 
@@ -10,10 +10,10 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
 }
 }
 
-fn query_state(deps: Deps) -> StdResult<StateResponse> {
+fn query_state(deps: Deps) -> StdResult<GetStateResponse> {
     let state = STATE.load(deps.storage)?;
 
-    let resp = StateResponse {
+    let resp = GetStateResponse {
         vault_id: state.vault_id,
         manager: state.manager,
         collateral: state.collateral,
@@ -26,7 +26,7 @@ fn query_state(deps: Deps) -> StdResult<StateResponse> {
     Ok(resp)
 }
 
-fn query_vault_balances(deps: Deps, env: Env) -> StdResult<VaultBalanceResponse> {
+fn query_vault_balances(deps: Deps, env: Env) -> StdResult<GetBalancesResponse> {
     let state = STATE.load(deps.storage)?;
 
     let c = deps
@@ -36,7 +36,7 @@ fn query_vault_balances(deps: Deps, env: Env) -> StdResult<VaultBalanceResponse>
         .querier
         .query_balance(&env.contract.address, state.debt.clone())?;
 
-    let resp = VaultBalanceResponse{
+    let resp = GetBalancesResponse{
         c,
         d
     };

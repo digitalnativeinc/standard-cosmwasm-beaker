@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QueryMsg",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "get_denom"
+      ],
+      "properties": {
+        "get_denom": {
+          "type": "object",
+          "required": [
+            "creator_address",
+            "subdenom"
+          ],
+          "properties": {
+            "creator_address": {
+              "type": "string"
+            },
+            "subdenom": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Config",
+  "type": "object",
+  "required": [
+    "admin",
+    "count",
+    "factory",
+    "initialized",
+    "stablecoin",
+    "v1",
+    "vault_code_id"
+  ],
+  "properties": {
+    "admin": {
+      "type": "string"
+    },
+    "count": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "factory": {
+      "type": "string"
+    },
+    "initialized": {
+      "type": "boolean"
+    },
+    "stablecoin": {
+      "type": "string"
+    },
+    "v1": {
+      "type": "string"
+    },
+    "vault_code_id": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    }
+  }
+}

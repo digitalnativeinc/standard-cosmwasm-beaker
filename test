@@ -1,0 +1,14 @@
+
+
+beaker wasm deploy {all contracts} --signer-account test1 --no-wasm-opt --raw '{ "count": 0 }'
+
+
+beaker console 
+
+
+sc = contract.vault_manager.signer(account.test1)
+
+await sc.{function in contract}
+
+
+

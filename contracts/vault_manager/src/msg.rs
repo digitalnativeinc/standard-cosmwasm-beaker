@@ -38,7 +38,7 @@ pub enum QueryMsg {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct VaultConfigResponse {
+pub struct GetVaultConfigResponse {
     pub c_decimal: u64,
     pub pool_id: u64,
     pub mcr: u64,
@@ -47,7 +47,7 @@ pub struct VaultConfigResponse {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct ConfigResponse {
+pub struct GetConfigResponse {
     pub v1: String,
     pub stablecoin: String,
     pub admin: String,

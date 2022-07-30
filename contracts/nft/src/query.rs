@@ -5,8 +5,8 @@ use cosmwasm_std::{to_binary, Addr, Binary, BlockInfo, Deps, Env, Order, StdErro
 
 use cw721::{
     AllNftInfoResponse, ApprovalResponse, ApprovalsResponse, ContractInfoResponse, CustomMsg,
-    Cw721Query, Expiration, NftInfoResponse, NumTokensResponse, OperatorsResponse, OwnerOfResponse,
-    TokensResponse,
+    Cw721Query, Expiration, NftInfoResponse, NumTokensResponse, AllOperatorsResponse, OwnerOfResponse,
+    AllTokensResponse,
 };
 use cw_storage_plus::Bound;
 use cw_utils::maybe_addr;
@@ -62,7 +62,7 @@ where
         include_expired: bool,
         start_after: Option<String>,
         limit: Option<u32>,
-    ) -> StdResult<OperatorsResponse> {
+    ) -> StdResult<AllOperatorsResponse> {
         let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
         let start_addr = maybe_addr(deps.api, start_after)?;
         let start = start_addr.as_ref().map(Bound::exclusive);
@@ -78,7 +78,7 @@ where
             .take(limit)
             .map(parse_approval)
             .collect();
-        Ok(OperatorsResponse { operators: res? })
+        Ok(AllOperatorsResponse { operators: res? })
     }
 
     fn approval(
@@ -148,7 +148,7 @@ where
         owner: String,
         start_after: Option<String>,
         limit: Option<u32>,
-    ) -> StdResult<TokensResponse> {
+    ) -> StdResult<AllTokensResponse> {
         let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
         let start = start_after.map(|s| Bound::ExclusiveRaw(s.into()));
 
@@ -162,7 +162,7 @@ where
             .take(limit)
             .collect::<StdResult<Vec<_>>>()?;
 
-        Ok(TokensResponse { tokens })
+        Ok(AllTokensResponse { tokens })
     }
 
     fn all_tokens(
@@ -170,7 +170,7 @@ where
         deps: Deps,
         start_after: Option<String>,
         limit: Option<u32>,
-    ) -> StdResult<TokensResponse> {
+    ) -> StdResult<AllTokensResponse> {
         let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
         let start = start_after.map(|s| Bound::ExclusiveRaw(s.into()));
 
@@ -181,7 +181,7 @@ where
             .map(|item| item.map(|(k, _)| k))
             .collect();
 
-        Ok(TokensResponse { tokens: tokens? })
+        Ok(AllTokensResponse { tokens: tokens? })
     }
 
     fn all_nft_info(

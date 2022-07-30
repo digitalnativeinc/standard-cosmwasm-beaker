@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VaultConfig",
+  "type": "object",
+  "required": [
+    "c_decimal",
+    "lfr",
+    "mcr",
+    "pool_id",
+    "sfr"
+  ],
+  "properties": {
+    "c_decimal": {
+      "description": "Collateral Decimal",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "lfr": {
+      "description": "Liquidation Fee Ratio",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "mcr": {
+      "description": "Maximum Collateral Ratio",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "pool_id": {
+      "description": "Pool Id to get price",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "sfr": {
+      "description": "Stability Fee Ratio (interest rate)",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    }
+  }
+}

@@ -34,7 +34,7 @@ pub enum QueryMsg {
 
 // We define a custom struct for each query response
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct StateResponse {
+pub struct GetStateResponse {
     pub vault_id: u64,
     pub manager: String,
     pub collateral: String,
@@ -47,7 +47,7 @@ pub struct StateResponse {
 
 // We define a custom struct for each query response
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct VaultBalanceResponse {
+pub struct GetBalancesResponse {
     pub c: Coin,
     pub d: Coin
 }

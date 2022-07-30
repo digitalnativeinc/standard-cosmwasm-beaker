@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QueryMsg",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "get_vault_config"
+      ],
+      "properties": {
+        "get_vault_config": {
+          "type": "object",
+          "required": [
+            "clt"
+          ],
+          "properties": {
+            "clt": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_config"
+      ],
+      "properties": {
+        "get_config": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

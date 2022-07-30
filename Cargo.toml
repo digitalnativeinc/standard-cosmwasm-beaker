@@ -1,13 +1,10 @@
 [workspace]
 
 members = [
-    "contracts/vault",
-    "contracts/vault_manager",
-    "contracts/nft",
-    "contracts/token",
-    "contracts/tokenfactory",
-    "packages/*"
+   
+    "contracts/*"
 ]
+
 
 
 [profile.release]

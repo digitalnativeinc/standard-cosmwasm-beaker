@@ -1,4 +1,4 @@
-use crate::msg::{ConfigResponse, VaultConfigResponse};
+use crate::msg::{GetConfigResponse, GetVaultConfigResponse};
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{
@@ -303,10 +303,10 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     }
 }
 
-fn query_config(deps: Deps) -> StdResult<ConfigResponse> {
+fn query_config(deps: Deps) -> StdResult<GetConfigResponse> {
     let config = CONFIG.may_load(deps.storage)?.unwrap_or_default();
 
-    let resp = ConfigResponse {
+    let resp = GetConfigResponse {
         v1: config.v1,
         stablecoin: config.stablecoin,
         admin: config.admin,
@@ -315,10 +315,10 @@ fn query_config(deps: Deps) -> StdResult<ConfigResponse> {
     Ok(resp)
 }
 
-fn query_vault_config(deps: Deps, clt: String) -> StdResult<VaultConfigResponse> {
+fn query_vault_config(deps: Deps, clt: String) -> StdResult<GetVaultConfigResponse> {
     let vault_config = VAULTCONFIG.may_load(deps.storage, clt)?.unwrap_or_default();
 
-    let resp = VaultConfigResponse {
+    let resp = GetVaultConfigResponse {
         c_decimal: vault_config.c_decimal,
         pool_id: vault_config.pool_id,
         mcr: vault_config.mcr,

@@ -9,7 +9,7 @@ use osmo_bindings::OsmosisQuery;
 use primitives::vault_manager::msg::VaultConfigResponse;
 
 use crate::error::ContractError;
-use crate::msg::{StateResponse, VaultBalanceResponse};
+use crate::msg::{GetStateResponse, GetBalancesResponse};
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 use crate::state::{State, STATE};
 use cosmwasm_std::{BankMsg, Coin, CosmosMsg, Uint128};
@@ -500,10 +500,10 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     }
 }
 
-fn query_state(deps: Deps) -> StdResult<StateResponse> {
+fn query_state(deps: Deps) -> StdResult<GetStateResponse> {
     let state = STATE.load(deps.storage)?;
 
-    let resp = StateResponse {
+    let resp = GetStateResponse {
         vault_id: state.vault_id,
         manager: state.manager,
         collateral: state.collateral,
@@ -516,7 +516,7 @@ fn query_state(deps: Deps) -> StdResult<StateResponse> {
     Ok(resp)
 }
 
-fn query_vault_balances(deps: Deps, env: Env) -> StdResult<VaultBalanceResponse> {
+fn query_vault_balances(deps: Deps, env: Env) -> StdResult<GetBalancesResponse> {
     let state = STATE.load(deps.storage)?;
 
     let c = deps
@@ -526,6 +526,6 @@ fn query_vault_balances(deps: Deps, env: Env) -> StdResult<VaultBalanceResponse>
         .querier
         .query_balance(&env.contract.address, state.debt.clone())?;
 
-    let resp = VaultBalanceResponse { c, d };
+    let resp = GetBalancesResponse { c, d };
     Ok(resp)
 }
