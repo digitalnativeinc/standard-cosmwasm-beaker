@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use cosmwasm_std::Binary;
 use cw721::Expiration;
+use cw721::Approval;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -95,7 +96,7 @@ pub enum QueryMsg {
         include_expired: Option<bool>,
     },
     /// List all operators that can access all of the owner's tokens
-    /// Return type: `OperatorsResponse`
+    /// Return type: `AllOperatorsResponse`
     AllOperators {
         owner: String,
         /// unset or false will filter out expired items, you must set to true to see them
@@ -126,7 +127,7 @@ pub enum QueryMsg {
 
     /// With Enumerable extension.
     /// Returns all tokens owned by the given address, [] if unset.
-    /// Return type: TokensResponse.
+    /// Return type: AllTokensResponse.
     Tokens {
         owner: String,
         start_after: Option<String>,
@@ -134,7 +135,7 @@ pub enum QueryMsg {
     },
     /// With Enumerable extension.
     /// Requires pagination. Lists all token_ids controlled by the contract.
-    /// Return type: TokensResponse.
+    /// Return type: AllTokensResponse.
     AllTokens {
         start_after: Option<String>,
         limit: Option<u32>,
@@ -148,4 +149,20 @@ pub enum QueryMsg {
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
 pub struct MinterResponse {
     pub minter: String,
+}
+
+
+#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+pub struct AllOperatorsResponse {
+    pub operators: Vec<Approval>,
+}
+
+#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+pub struct AllTokensResponse {
+    pub tokens: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+pub struct TokensResponse {
+    pub tokens: Vec<String>,
 }

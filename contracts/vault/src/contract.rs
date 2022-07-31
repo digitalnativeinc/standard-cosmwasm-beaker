@@ -342,11 +342,11 @@ pub fn try_withdraw_collateral(
             })?,
         }))?;
     let spot_price = OsmosisQuery::spot_price(vault_config.pool_id, &c.denom, "g-usdc");
-    let query = QueryRequest::from(spot_price);
-    let c_price = deps.querier.query(&query)?;
+    //let query = QueryRequest::from(spot_price);
+    let c_price = Uint128::from(1000u64);
     let spot_priced = OsmosisQuery::spot_price(vault_config.pool_id, &d.denom, "g-usdc");
-    let query = QueryRequest::from(spot_priced);
-    let d_price = deps.querier.query(&query)?;
+    //let query = QueryRequest::from(spot_priced);
+    let d_price = Uint128::from(1000u64);
 
     if !_is_valid_cdp(
         c_price,
@@ -424,8 +424,8 @@ pub fn try_pay_debt(
 
     // process fees in sfr
     let spot_priced = OsmosisQuery::spot_price(vault_config.pool_id, &deposit.denom, "g-usdc");
-    let query = QueryRequest::from(spot_priced);
-    let d_price: Uint128 = deps.querier.query(&query)?;
+    //let query = QueryRequest::from(spot_priced);
+    let d_price: Uint128 = Uint128::from(1000u64);
     let d_value = d_price * deposit.amount;
     // (duration in months with 6 precision) * (sfr * assetValue/100(with 5decimals))
     let duration = ((env.block.time.seconds() - state.last_updated) * u64::pow(10, 6)) / 259200;

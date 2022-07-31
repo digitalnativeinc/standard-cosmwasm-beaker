@@ -1,9 +1,11 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{
-    to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint128,
+    to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint128, CosmosMsg, BankMsg,
 };
 use cw2::set_contract_version;
+use osmosis_std::cosmos_sdk_proto::cosmos::base::v1beta1::Coin;
+use osmosis_std::types::osmosis::tokenfactory::v1beta1::{MsgMint, MsgCreateDenom, MsgChangeAdmin, MsgBurn};
 
 use crate::error::TokenFactoryError;
 use crate::msg::{ExecuteMsg, GetDenomResponse, InstantiateMsg, QueryMsg};
@@ -38,32 +40,35 @@ pub fn execute(
     _env: Env,
     _info: MessageInfo,
     msg: ExecuteMsg,
-) -> Result<Response<OsmosisMsg>, TokenFactoryError> {
+) -> Result<Response, TokenFactoryError> {
     match msg {
-        ExecuteMsg::CreateDenom { subdenom } => create_denom(subdenom),
+        ExecuteMsg::CreateDenom { subdenom } => create_denom(_env, subdenom),
         ExecuteMsg::ChangeAdmin {
             denom,
             new_admin_address,
-        } => change_admin(deps, denom, new_admin_address),
+        } => change_admin(deps, _env, denom, new_admin_address),
         ExecuteMsg::MintTokens {
             denom,
             amount,
             mint_to_address,
-        } => mint_tokens(deps, denom, amount, mint_to_address),
+        } => mint_tokens(deps, _env,  denom, amount, mint_to_address),
         ExecuteMsg::BurnTokens {
             denom,
             amount,
             burn_from_address,
-        } => burn_tokens(deps, denom, amount, burn_from_address),
+        } => burn_tokens(deps, _env, denom, amount, burn_from_address),
     }
 }
 
-pub fn create_denom(subdenom: String) -> Result<Response<OsmosisMsg>, TokenFactoryError> {
+pub fn create_denom(env: Env, subdenom: String) -> Result<Response, TokenFactoryError> {
     if subdenom.eq("") {
         return Err(TokenFactoryError::InvalidSubdenom { subdenom });
     }
 
-    let create_denom_msg = OsmosisMsg::CreateDenom { subdenom };
+    let create_denom_msg:CosmosMsg = MsgCreateDenom {
+        sender: env.contract.address.to_string(),
+        subdenom,
+    }.into();
 
     let res = Response::new()
         .add_attribute("method", "create_denom")
@@ -74,17 +79,19 @@ pub fn create_denom(subdenom: String) -> Result<Response<OsmosisMsg>, TokenFacto
 
 pub fn change_admin(
     deps: DepsMut<OsmosisQuery>,
+    env: Env,
     denom: String,
     new_admin_address: String,
-) -> Result<Response<OsmosisMsg>, TokenFactoryError> {
+) -> Result<Response, TokenFactoryError> {
     deps.api.addr_validate(&new_admin_address)?;
 
     validate_denom(deps, denom.clone())?;
 
-    let change_admin_msg = OsmosisMsg::ChangeAdmin {
+    let change_admin_msg:CosmosMsg = MsgChangeAdmin {
+        sender: env.contract.address.to_string(),
         denom,
-        new_admin_address,
-    };
+        new_admin: new_admin_address,
+    }.into();
 
     let res = Response::new()
         .add_attribute("method", "change_admin")
@@ -95,10 +102,11 @@ pub fn change_admin(
 
 pub fn mint_tokens(
     deps: DepsMut<OsmosisQuery>,
+    env: Env,
     denom: String,
     amount: Uint128,
     mint_to_address: String,
-) -> Result<Response<OsmosisMsg>, TokenFactoryError> {
+) -> Result<Response, TokenFactoryError> {
     deps.api.addr_validate(&mint_to_address)?;
 
     if amount.eq(&Uint128::new(0_u128)) {
@@ -106,22 +114,39 @@ pub fn mint_tokens(
     }
 
     validate_denom(deps, denom.clone())?;
+    
 
-    let mint_tokens_msg = OsmosisMsg::mint_contract_tokens(denom, amount, mint_to_address);
+    let mint_tokens_msg:CosmosMsg = MsgMint {
+        sender: env.contract.address.to_string(),
+        amount: Some(Coin {
+            denom: denom.clone(),
+            amount: amount.to_string(),
+        }),
+    }.into();
+    
+    let send_minted_tokens:CosmosMsg = CosmosMsg::Bank(BankMsg::Send {
+        to_address: mint_to_address,
+        amount: vec![cosmwasm_std::Coin {
+            denom,
+            amount
+        }],
+    });
 
     let res = Response::new()
         .add_attribute("method", "mint_tokens")
-        .add_message(mint_tokens_msg);
+        .add_message(mint_tokens_msg)
+        .add_message(send_minted_tokens);
 
     Ok(res)
 }
 
 pub fn burn_tokens(
     deps: DepsMut<OsmosisQuery>,
+    env: Env, 
     denom: String,
     amount: Uint128,
     burn_from_address: String,
-) -> Result<Response<OsmosisMsg>, TokenFactoryError> {
+) -> Result<Response, TokenFactoryError> {
     if !burn_from_address.is_empty() {
         return Result::Err(TokenFactoryError::BurnFromAddressNotSupported {
             address: burn_from_address,
@@ -134,7 +159,13 @@ pub fn burn_tokens(
 
     validate_denom(deps, denom.clone())?;
 
-    let burn_token_msg = OsmosisMsg::burn_contract_tokens(denom, amount, burn_from_address);
+    let burn_token_msg:CosmosMsg = MsgBurn {
+        sender: env.contract.address.to_string(),
+        amount: Some(Coin {
+            denom,
+            amount: amount.to_string(),
+        }),
+    }.into();
 
     let res = Response::new()
         .add_attribute("method", "burn_tokens")

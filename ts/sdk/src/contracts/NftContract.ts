@@ -266,7 +266,7 @@ export interface NftReadOnlyInterface {
   }: {
     limit?: number;
     startAfter?: string;
-  }) => Promise<AllTokensResponse>;
+  }) => Promise<TokensResponse>;
   minter: () => Promise<MinterResponse>;
 }
 export class NftQueryClient implements NftReadOnlyInterface {

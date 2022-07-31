@@ -187,11 +187,11 @@ pub fn try_create_vault(
 
     // TODO: get asset price
     let spot_price = OsmosisQuery::spot_price(vault_config.pool_id, &c.denom, "g-usdc");
-    let query = QueryRequest::from(spot_price);
-    let c_price = deps.querier.query(&query)?;
+    //let query = QueryRequest::from(spot_price);
+    let c_price = Uint128::from(1000u64);
     let spot_priced = OsmosisQuery::spot_price(vault_config.pool_id, &d.denom, "g-usdc");
-    let query = QueryRequest::from(spot_priced);
-    let d_price = deps.querier.query(&query)?;
+    //let query = QueryRequest::from(spot_priced);
+    let d_price = Uint128::from(1000u64);
 
     // calculate cdp
     if _is_valid_cdp(
@@ -223,7 +223,7 @@ pub fn try_create_vault(
                 msg: CosmosMsg::Wasm(WasmMsg::Instantiate {
                     code_id: config.vault_code_id,
                     funds: vec![input.clone()],
-                    admin: Some(env.contract.address.to_string()),
+                    admin: None,
                     label: "vault".to_string(),
                     msg: to_binary(&primitives::vault::msg::InstantiateMsg {
                         vault_id: config.count,
@@ -272,12 +272,12 @@ pub fn reply(
                     }),
                     // Mint Stablecoin
                     CosmosMsg::Wasm(WasmMsg::Execute {
-                        contract_addr: config.stablecoin,
+                        contract_addr: config.factory,
                         funds: vec![],
-                        msg: to_binary(&primitives::token::msg::ExecuteMsg::Mint {
-                            recipient: reserve.to,
-                            amount: reserve.amount,
-                        })?,
+                        msg: to_binary(&primitives::token::msg::ExecuteMsg::MintTokens {
+                            amount:reserve.amount, 
+                            denom: config.stablecoin, 
+                            mint_to_address: reserve.to })?,
                     }),
                 ]))
         }
